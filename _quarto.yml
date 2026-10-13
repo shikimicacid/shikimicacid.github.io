@@ -14,8 +14,8 @@ website:
           text: Viz1
         - href: tt2.qmd
           text: Viz2
-        
- 
+      - text: String Analysis
+        - href: stringanalysis.qmd
 format:
   html:
     theme:
