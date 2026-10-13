@@ -9,11 +9,12 @@ website:
       - href: index.qmd
         text: Home Page
       - text: Data Viz
-      - menu: 
+        menu: 
         - href: tt1.qmd
           text: Viz1
         - href: tt2.qmd
           text: Viz2
+        
  
 format:
   html:

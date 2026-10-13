@@ -1,0 +1,109 @@
+---
+title: "Netflix Titles"
+author: "Daniel Wei"
+execute:
+  warning: false
+  message: false
+---
+
+Data source: https://github.com/rfordatascience/tidytuesday/blob/main/data/2021/2021-04-20/readme.md 
+Original source: 
+
+TV is cool. Let's see what's on today.
+
+```{r}
+
+netflix_titles <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2021/2021-04-20/netflix_titles.csv')
+
+```
+
+Of all movie and show titles on Netflix, I'm curious to see how many contain the word "the". First, let's turn every title into lowercase.
+
+```{r}
+netflix_titles <- netflix_titles |> mutate(lowertitle = str_to_lower(title))
+View(netflix_titles)
+```
+
+Great! Now we can detect every time a title contains the word "the".
+```{r}
+netflix_titles <- netflix_titles |> mutate(themeter = str_detect(title, regex("\\bthe\\b"))) |> filter(themeter == TRUE)
+
+View(netflix_titles)
+```
+
+Of the shows and movies with the word "the" in them, how many have titles that are less than 12 characters long? Let's find out: 
+
+```{r}
+netflix_titles <- netflix_titles |> filter(str_count(lowertitle) > 12)
+
+View(netflix_titles)
+```
+
+Wow, that's a lot. How many of them are listed under Kids' TV, as well as another genre? Let's perform a lookaround: 
+
+```{r}
+netflix_titles <- netflix_titles |> mutate (kidfriendly = str_extract_all(listed_in, r"(Kids' TV(?=,))"))
+
+View(netflix_titles)
+```
+
+Lit! Let's plot our results. Are more kid-friendly Netflix entries with "the" in the title TV shows, or are more movies?
+```{r}
+netflix_titles |>
+  ggplot(aes(x = type)) +
+  geom_bar() +
+  labs(
+    title = "Are there more Movies or TV Shows that are Kid-Friendly and have The in the title?",
+    x = "Category",
+    y = "Amount",
+  )
+
+```
+
+Awesome. It appears that of the kid-friendly titles with "the" in their name, there are more movies than TV shows. 
+
+Let's move on to part 2. 
+
+```{r}
+
+titles2 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2021/2021-04-20/netflix_titles.csv')
+
+```
+
+First, I'm going to change the country of origin into a factor variable, and reorder the countries by type.
+```{r}
+
+titles2 <- titles2 |> mutate(country = fct_reorder(country, type == "Movie", na.rm = TRUE)) |> arrange(country)
+view(titles2)
+```
+
+Let's remove all the titles made in multiple countries for simplicity. 
+```{r}
+titles2 <- titles2 |>
+  filter(str_detect(country, "^(?!.*,).+$"))
+```
+
+ Yay! Finally, let's find all the titles with multiple directors. 
+
+```{r}
+titles2 <- titles2 |>
+  filter(str_detect(director, "^(?=.*,)"))
+```
+
+Perfect.
+
+Let's graph our results as a histogram. 
+
+```{r}
+titles2 |>
+  ggplot(aes(y = country)) +
+  geom_bar() +
+  labs(
+    title = "What countries have the most titles with multiple directors, but one country of origin?",
+    x = "Count",
+    y = "Country",
+  )
+
+```
+
+The United States has the most amount of titles on Netflix with multiple directors, but that are just from one country (the USA). This makes sense because Netflix is headquartered here. The countries with the lowest amount are either dissolved states (West Germany), developing countries (South Africa and Nigeria), or countries with their own media markets (Austria and Italy). 

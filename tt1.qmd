@@ -1,4 +1,10 @@
-
+---
+title: "your title goes here"
+author: "your name"
+execute:
+  warning: false
+  message: false
+---
 For this analysis, I chose to use the xkcd color survey data. I am a fan of xkcd. 
 
 TidyTuesday source: https://hardin47.github.io/TidyTuesday/2025-07-08/xkcd_color.html 
