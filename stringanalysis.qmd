@@ -32,7 +32,7 @@ netflix_titles <- netflix_titles |> mutate(themeter = str_detect(title, regex("\
 
 ```
 
-Of the shows and movies with the word "the" in them, how many have titles that are less than 12 characters long? Let's find out: 
+Of the shows and movies with the word "the" in them, how many have titles that are more than 12 characters long? Let's find out: 
 
 ```{r}
 netflix_titles <- netflix_titles |> filter(str_count(lowertitle) > 12)
@@ -42,20 +42,20 @@ netflix_titles <- netflix_titles |> filter(str_count(lowertitle) > 12)
 
 
 
-Lit! Let's plot our results. Are there more movies with "the" in the name of Netflix, or more TV shows? 
+Lit! Let's plot our results. Are there more movies with "the" in the name and with a title longer than 12 characters on Netflix, or more TV shows? 
 ```{r}
 netflix_titles |> 
   ggplot(aes(x = type)) +
   geom_bar() +
   labs(
-    title = "Are there more Movies or TV Shows that are Kid-Friendly and have The in the title?",
+    title = "Are there more Movies or TV Shows that have more than 12 Characters and have The in the title?",
     x = "Category",
     y = "Amount",
   )
 
 ```
 
-Awesome. It appears that of the kid-friendly titles with "the" in their name, there are more movies than TV shows. 
+Awesome. It appears that of the 12+ character titles with "the" in their name, there are more movies than TV shows. 
 
 Let's move on to part 2. 
 
