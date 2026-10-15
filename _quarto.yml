@@ -8,14 +8,15 @@ website:
     left:
       - href: index.qmd
         text: Home Page
+      - href: stringanalysis.qmd
+        text: String Analysis: Playing in Netflix's Butt 
       - text: Data Viz
         menu: 
         - href: tt1.qmd
           text: Viz1
         - href: tt2.qmd
           text: Viz2
-      - href: stringanalysis.qmd
-        text: String Analysis
+      
 format:
   html:
     theme:
