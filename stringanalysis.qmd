@@ -113,7 +113,7 @@ titles3 <- titles3 |>
     gfcheck = str_extract(description, "\\w+(?=\\sgirlfriend)"),
     bfcheck = str_extract(description, "\\w+(?=\\sboyfriend)")
   )  |> mutate(hetero = str_detect(bfcheck, "her") | str_detect(gfcheck, "his")) |> mutate(BIGANDGAY = str_detect(bfcheck, "his") | str_detect(gfcheck, "her")) |> summarize(straight = sum(hetero, na.rm = TRUE), gay = sum(BIGANDGAY, na.rm = TRUE)) |> pivot_longer (cols = c(straight, gay), names_to = "ISITGAY")
-  View(titles3)
+  
   ggplot(titles3, aes(x = ISITGAY, weight = value)) + geom_bar() + labs(x = "Is the show gay or straight?")
 ```
 

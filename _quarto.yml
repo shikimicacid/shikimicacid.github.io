@@ -9,7 +9,7 @@ website:
       - href: index.qmd
         text: Home Page
       - href: stringanalysis.qmd
-        text: String Analysis: Playing in Netflix's Butt 
+        text: String Analysis on Netflix Titles 
       - text: Data Viz
         menu: 
         - href: tt1.qmd
@@ -20,7 +20,7 @@ website:
 format:
   html:
     theme:
-      - quartz
+      - flatly
       - brand
     css: styles.css
     toc: true
