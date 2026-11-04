@@ -15,3 +15,59 @@ They compiled the data from
 - [fbref](https://fbref.com/en/squads/18bb7c10/Arsenal-Stats)
 
 [See here for the compilation.](https://github.com/bokushiSan/Arsenal_EPL_dataset/tree/main)
+
+To start, we're going to read in the data and plot the relationships between HoAw and ArsenalScore.
+
+```{r}
+library(tidyverse)
+arsenal <- read_csv("matches.csv")
+
+arsenal <- arsenal %>%
+  mutate(HoAw = factor(str_to_title(HoAw), levels = c("Home", "Away")))
+
+ggplot(arsenal, aes(x = HoAw, y = ArsenalScore, fill = HoAw, color = HoAw)) +
+  geom_boxplot() +
+  labs(title = "Goals per game",
+       x = NULL, y = "Score") 
+
+
+```
+
+From the plot, we can see that the mean number of goals scored at home is about 2, vs 1.5 at away. Thus, this leads me to form the alternate hypothesis: when there is an away game, Arsenal will tend to score lower. (That is, when HoAw = Away, ArsenalScore will be lower). The null hypothesis, of course, is that Arsenal will score the same 
+
+Let's run the hypothesis test now, visualize it, and then find the p-value. Since we are measuring 2 variables, it is a permutation test. 
+
+```{r}
+
+perm_data <- function(rep, data) {
+  data |>
+    select(HoAw, ArsenalScore) |>
+    mutate(score_perm = sample(ArsenalScore, replace = FALSE)) |>
+    group_by(HoAw) |>
+    summarize(
+      obs_ave = mean(ArsenalScore),
+      perm_ave = mean(score_perm),
+    ) |>
+    summarize(
+      obs_ave_diff = diff(obs_ave),
+      perm_ave_diff = diff(perm_ave),
+      rep = rep
+    )
+}
+set.seed(432)
+arsenal_stats <- map(c(1:1296), perm_data, data = arsenal) |>
+  list_rbind()
+
+
+
+
+arsenal_stats |>
+  ggplot(aes(x = perm_ave_diff)) +
+  geom_histogram(binwidth = 0.1) +
+  geom_vline(aes(xintercept = obs_ave_diff), color = "tomato")
+
+arsenal_stats |>
+  summarize(
+    p_val_ave = mean(perm_ave_diff > obs_ave_diff),
+  )
+```
