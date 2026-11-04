@@ -10,6 +10,8 @@ website:
         text: Home Page
       - href: stringanalysis.qmd
         text: String Analysis on Netflix Titles 
+      - href: permutationtest.qmd
+        text: Hypothesis Testing Arsenal 
       - text: Data Viz
         menu: 
         - href: tt1.qmd
