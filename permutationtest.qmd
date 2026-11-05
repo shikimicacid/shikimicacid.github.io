@@ -20,12 +20,12 @@ To start, we're going to read in the data and plot the relationships between HoA
 
 ```{r}
 library(tidyverse)
-arsenal <- read_csv("matches.csv")
+arsenalscores <- read_csv("matches.csv")
 
-arsenal <- arsenal %>%
-  mutate(HoAw = factor(str_to_title(HoAw), levels = c("Home", "Away")))
+arsenalscores <- arsenalscores |>
+  group_by(HoAw)
 
-ggplot(arsenal, aes(x = HoAw, y = ArsenalScore, fill = HoAw, color = HoAw)) +
+ggplot(arsenalscores, aes(x = HoAw, y = ArsenalScore)) +
   geom_boxplot() +
   labs(title = "Goals per game",
        x = NULL, y = "Score") 
@@ -33,14 +33,15 @@ ggplot(arsenal, aes(x = HoAw, y = ArsenalScore, fill = HoAw, color = HoAw)) +
 
 ```
 
-From the plot, we can see that the mean number of goals scored at home is about 2, vs 1.5 at away. Thus, this leads me to form the alternate hypothesis: when there is an away game, Arsenal will tend to score lower. (That is, when HoAw = Away, ArsenalScore will be lower). The null hypothesis, of course, is that Arsenal will score the same 
+From the plot, we can see that the mean number of goals scored at home is about 2, vs 1.5 at away.  . The null hypothesis is that Arsenal will score the same mean number of goals at home, compared to when they are away. The alternate hypothesis is that the means of the scores at home will be greater than the means when they are away.
 
 Let's run the hypothesis test now, visualize it, and then find the p-value. Since we are measuring 2 variables, it is a permutation test. 
 
 ```{r}
-
+library(tidyverse)
 perm_data <- function(rep, data) {
   data |>
+    ungroup() |> 
     select(HoAw, ArsenalScore) |>
     mutate(score_perm = sample(ArsenalScore, replace = FALSE)) |>
     group_by(HoAw) |>
@@ -55,7 +56,7 @@ perm_data <- function(rep, data) {
     )
 }
 set.seed(432)
-arsenal_stats <- map(c(1:1296), perm_data, data = arsenal) |>
+arsenal_stats <- map(c(1:1296), perm_data, data = arsenalscores) |>
   list_rbind()
 
 
@@ -63,11 +64,15 @@ arsenal_stats <- map(c(1:1296), perm_data, data = arsenal) |>
 
 arsenal_stats |>
   ggplot(aes(x = perm_ave_diff)) +
-  geom_histogram(binwidth = 0.1) +
+  geom_histogram(bins = 30) +
   geom_vline(aes(xintercept = obs_ave_diff), color = "tomato")
 
 arsenal_stats |>
   summarize(
-    p_val_ave = mean(perm_ave_diff > obs_ave_diff),
+    p_val_ave = mean(perm_ave_diff >= obs_ave_diff),
   )
 ```
+
+From the plot, we see that the observed value (in red)  is completely outside the distribution. It is far larger than any of the values within the distribution. 
+
+As you can see from the permutation test, the p-value is 0, which is consistent with the plot. This means that the probability of the null hypothesis being true is infinitesimally small. Thus, we can conclude that the mean score of Arsenal's games on the home field is all but guaranteed to be greater than the mean score of its games on the away field. 
