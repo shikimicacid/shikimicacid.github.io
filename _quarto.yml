@@ -12,6 +12,8 @@ website:
         text: String Analysis on Netflix Titles 
       - href: permutationtest.qmd
         text: Hypothesis Testing Arsenal 
+      - href: ethics.qmd
+        text: Cambridge-Analytica Ethics 
       - text: Data Viz
         menu: 
         - href: tt1.qmd
